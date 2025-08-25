@@ -354,6 +354,48 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     });
   };
 
+  const getFilteredDocuments = () => {
+    if (!user) return [];
+    
+    switch (user.role) {
+      case 'proveedor':
+        return documents.filter(doc => doc.supplierId === user.id);
+      case 'aprobador':
+        return documents.filter(doc => doc.approverEmail === user.email);
+      case 'operaciones':
+        return documents;
+      default:
+        return [];
+    }
+  };
+
+  const getFilteredSuppliers = () => {
+    if (!user) return [];
+    
+    switch (user.role) {
+      case 'operaciones':
+        return suppliers;
+      default:
+        return [];
+    }
+  };
+
+  const getFilteredPaymentRecords = () => {
+    const filteredDocs = getFilteredDocuments();
+    return filteredDocs
+      .filter(doc => doc.status === 'approved')
+      .map(doc => ({
+        id: doc.id,
+        documentNumber: doc.number,
+        supplierName: suppliers.find(s => s.id === doc.supplierId)?.businessName || 'Proveedor',
+        amount: doc.amount,
+        currency: doc.currency,
+        paymentStatus: doc.paymentStatus,
+        estimatedPaymentDate: doc.estimatedPaymentDate,
+        approvedAt: doc.approvedAt
+      }));
+  };
+
   const value = {
     documents,
     addDocument,
