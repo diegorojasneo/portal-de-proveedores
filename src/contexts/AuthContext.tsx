@@ -4,7 +4,6 @@ import { User } from '../types';
 
 interface AuthContextType {
   user: User | null;
-  isCheckingSession: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
@@ -28,39 +27,31 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isCheckingSession, setIsCheckingSession] = useState(true);
 
   useEffect(() => {
     // Check for existing session
     const checkSession = async () => {
-      try {
-        setIsCheckingSession(true);
-        const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session?.user) {
+        // Get additional user info from portal_users table
+        const { data: portalUser } = await supabase
+          .from('portal_users')
+          .select('*')
+          .eq('email', session.user.email)
+          .single();
         
-        if (session?.user) {
-          // Get additional user info from portal_users table
-          const { data: portalUser } = await supabase
-            .from('portal_users')
-            .select('*')
-            .eq('email', session.user.email)
-            .single();
-          
-          if (portalUser) {
-            const userData: User = {
-              id: portalUser.id,
-              email: portalUser.email,
-              name: portalUser.full_name || 'Usuario',
-              role: portalUser.role as 'proveedor' | 'aprobador' | 'operaciones',
-              createdAt: new Date(portalUser.created_at),
-              lastLogin: new Date()
-            };
-            setUser(userData);
-          }
+        if (portalUser) {
+          const userData: User = {
+            id: portalUser.id,
+            email: portalUser.email,
+            name: portalUser.full_name || 'Usuario',
+            role: portalUser.role as 'proveedor' | 'aprobador' | 'operaciones',
+            createdAt: new Date(portalUser.created_at),
+            lastLogin: new Date()
+          };
+          setUser(userData);
         }
-      } catch (error) {
-        console.error('Error checking session:', error);
-      } finally {
-        setIsCheckingSession(false);
       }
     };
 
@@ -163,7 +154,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value = {
     user,
-    isCheckingSession,
     login,
     logout,
     isLoading,

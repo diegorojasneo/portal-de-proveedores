@@ -6,7 +6,7 @@ import { ForgotPasswordForm } from './components/auth/ForgotPasswordForm';
 import { MainPortal } from './components/portal/MainPortal';
 
 const AppContent: React.FC = () => {
-  const { user, isCheckingSession } = useAuth();
+  const { user } = useAuth();
   const [authView, setAuthView] = useState<'login' | 'forgot'>('login');
 
   if (!user) {
