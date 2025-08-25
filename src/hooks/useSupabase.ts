@@ -547,7 +547,7 @@ export const useFeedbackSurveys = () => {
 
 // ✅ HOOK NUEVO: Gestionar usuarios de operaciones
 export const useOperationsUsers = () => {
-  const [operationsUsers, setOperationsUsers] = useState<Tables['usuarios_operaciones']['Row'][]>([]);
+  const [operationsUsers, setOperationsUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -560,7 +560,7 @@ export const useOperationsUsers = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('usuarios_operaciones')
+        .from('operations_users')
         .select('*')
         .eq('is_active', true)
         .order('created_at', { ascending: false });
@@ -588,7 +588,7 @@ export const useOperationsUsers = () => {
 
 // ✅ HOOK NUEVO: Gestionar directorio de aprobadores
 export const useApprovers = () => {
-  const [approvers, setApprovers] = useState<Tables['directorio_aprobadores']['Row'][]>([]);
+  const [approvers, setApprovers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -601,7 +601,7 @@ export const useApprovers = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('directorio_aprobadores')
+        .from('approver_directory')
         .select('*')
         .eq('is_active', true)
         .order('created_at', { ascending: false });
@@ -644,13 +644,34 @@ export const useDashboardStats = () => {
       
       // ✅ USAR SUPABASE CLIENT: v_dashboard_proveedor con proveedor_id
       const { data, error } = await supabase
-        .from('v_dashboard_proveedor')
+        .from('proveedores')
         .select('*')
         .eq('proveedor_id', supplierId)
-        .maybeSingle();
+        .single();
 
       if (error) throw error;
-      setStats(data || null);
+      
+      // Calculate stats from supplier data
+      const { data: comprobantes } = await supabase
+        .from('comprobantes')
+        .select('*')
+        .eq('proveedor_id', supplierId);
+        
+      const { data: pagos } = await supabase
+        .from('pagos')
+        .select('*')
+        .in('comprobante_id', comprobantes?.map(c => c.id) || []);
+        
+      const stats = {
+        comprobantes_registrados: comprobantes?.length || 0,
+        comprobantes_aprobados: comprobantes?.filter(c => c.status === 'aprobado').length || 0,
+        comprobantes_pendientes: comprobantes?.filter(c => c.status === 'pendiente').length || 0,
+        comprobantes_rechazados: comprobantes?.filter(c => c.status === 'rechazado').length || 0,
+        pagos_recibidos: pagos?.filter(p => p.estado_pago === 'pagado').length || 0,
+        monto_total_pagado: pagos?.filter(p => p.estado_pago === 'pagado').reduce((sum, p) => sum + p.monto, 0) || 0
+      };
+      
+      setStats(stats);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error fetching supplier stats');
     } finally {
@@ -667,14 +688,28 @@ export const useDashboardStats = () => {
     try {
       setLoading(true);
       
-      // ✅ USAR SUPABASE CLIENT: v_dashboard_operaciones
+      // Calculate operations stats from actual tables
       const { data, error } = await supabase
-        .from('v_dashboard_operaciones')
+        .from('comprobantes')
         .select('*')
-        .maybeSingle();
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setStats(data || null);
+      
+      const { data: pagos } = await supabase
+        .from('pagos')
+        .select('*');
+        
+      const stats = {
+        total_comprobantes: data?.length || 0,
+        total_aprobados: data?.filter(c => c.status === 'aprobado').length || 0,
+        total_pendientes: data?.filter(c => c.status === 'pendiente').length || 0,
+        total_rechazados: data?.filter(c => c.status === 'rechazado').length || 0,
+        pagos_realizados: pagos?.filter(p => p.estado_pago === 'pagado').length || 0,
+        monto_pagado: pagos?.filter(p => p.estado_pago === 'pagado').reduce((sum, p) => sum + p.monto, 0) || 0
+      };
+      
+      setStats(stats);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error fetching operations stats');
     } finally {
@@ -691,11 +726,14 @@ export const useDashboardStats = () => {
     try {
       setLoading(true);
       
-      // ✅ USAR SUPABASE CLIENT: v_aprobador_inbox con aprobador_email
+      // Get pending documents for this approver
       const { data, error } = await supabase
-        .from('v_bandeja_aprobador')
-        .select('*')
-        .eq('aprobador_email', approverEmail)
+        .from('comprobantes')
+        .select(`
+          *,
+          proveedores (razon_social, ruc)
+        `)
+        .eq('correo_aprobador', approverEmail)
         .eq('status', 'pendiente');
 
       if (error) throw error;
@@ -732,7 +770,7 @@ export const usePaymentsQueue = () => {
     try {
       setLoading(true);
       
-      // ✅ USAR SUPABASE CLIENT: v_dashboard_operaciones
+      // ✅ USAR SUPABASE CLIENT: v_cola_pagos_operaciones
       const { data, error } = await supabase
         .from('v_cola_pagos_operaciones')
         .select('*');
