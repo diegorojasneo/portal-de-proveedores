@@ -3,45 +3,56 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Create a mock client if environment variables are missing
-let supabase: any;
-let isSupabaseConfigured = false;
+export const supabase = createClient(supabaseUrl!, supabaseAnonKey!);
+export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Missing Supabase environment variables. Using mock client.');
-  // Create a mock client that returns empty data
-  supabase = {
-    from: () => ({
-      select: () => ({
-        eq: () => ({
-          maybeSingle: () => Promise.resolve({ data: null, error: null }),
-          order: () => Promise.resolve({ data: [], error: null })
-        }),
-        order: () => Promise.resolve({ data: [], error: null }),
-        maybeSingle: () => Promise.resolve({ data: null, error: null })
-      }),
-      insert: () => ({
-        select: () => Promise.resolve({ data: [], error: null })
-      }),
-      update: () => ({
-        eq: () => ({
-          select: () => Promise.resolve({ data: [], error: null })
-        })
-      })
-    })
-  };
-  isSupabaseConfigured = false;
-} else {
-  supabase = createClient(supabaseUrl, supabaseAnonKey);
-  isSupabaseConfigured = true;
-}
+// Auth helper functions
+export const getCurrentUser = async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  return user;
+};
 
-export { supabase, isSupabaseConfigured };
+export const getSession = async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session;
+};
 
-// 🔄 TIPOS ACTUALIZADOS PARA COINCIDIR CON ESQUEMA REAL
 export interface Database {
   public: {
     Tables: {
+      // Portal users table for additional user info
+      portal_users: {
+        Row: {
+          id: string;
+          user_id: string;
+          email: string;
+          full_name: string | null;
+          role: 'proveedor' | 'aprobador';
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          email: string;
+          full_name?: string | null;
+          role: 'proveedor' | 'aprobador';
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          email?: string;
+          full_name?: string | null;
+          role?: 'proveedor' | 'aprobador';
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       // ✅ TABLA REAL: proveedores
       proveedores: {
         Row: {

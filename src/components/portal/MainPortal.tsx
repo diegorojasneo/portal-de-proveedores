@@ -8,12 +8,7 @@ import { PaymentsView } from '../views/PaymentsView';
 import { DocumentsCenter } from '../views/DocumentsCenter';
 import { AnnouncementsView } from '../views/AnnouncementsView';
 import { FeedbackView } from '../views/FeedbackView';
-import { SuppliersManagement } from '../views/SuppliersManagement';
-import { AllDocuments } from '../views/AllDocuments';
-import { PaymentsAdmin } from '../views/PaymentsAdmin';
 import { ApproveDocuments } from '../views/ApproveDocuments';
-import { SuppliersReview } from '../views/SuppliersReview';
-import { FeedbackAdmin } from '../views/FeedbackAdmin';
 import { SupplierConfiguration } from '../views/SupplierConfiguration';
 
 export const MainPortal: React.FC = () => {
@@ -36,16 +31,8 @@ export const MainPortal: React.FC = () => {
         return <AnnouncementsView />;
       case 'feedback':
         return <FeedbackView />;
-      case 'suppliers':
-        return <SuppliersManagement />;
-      case 'all-documents':
-        return <AllDocuments />;
-      case 'payments-admin':
-        return <PaymentsAdmin />;
       case 'approve-documents':
         return <ApproveDocuments />;
-      case 'feedback-admin':
-        return <FeedbackAdmin />;
       case 'configuration':
         return <SupplierConfiguration />;
       default:

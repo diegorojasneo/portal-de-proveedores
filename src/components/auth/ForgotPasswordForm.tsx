@@ -12,7 +12,7 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onBack }
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
-  const { requestPasswordReset, isLoading } = useAuth();
+  const { resetPassword, isLoading } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +23,7 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onBack }
       return;
     }
 
-    const success = await requestPasswordReset(email);
+    const success = await resetPassword(email);
     if (success) {
       setIsSubmitted(true);
     } else {

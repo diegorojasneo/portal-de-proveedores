@@ -45,22 +45,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, onColl
           { id: 'configuration', label: 'Configuración', icon: Settings }
         ];
       
-      case 'operaciones':
-        return [
-          ...commonItems.slice(0, 1), // Dashboard
-          { id: 'suppliers', label: 'Gestión de Proveedores', icon: Users },
-          { id: 'all-documents', label: 'Todos los Comprobantes', icon: FileText },
-          { id: 'payments-admin', label: 'Administrar Pagos', icon: DollarSign },
-          ...commonItems.slice(1), // Centro de Documentación y Comunicados
-          { id: 'feedback-admin', label: 'Ver Encuestas', icon: Star }
-        ];
-      
       case 'aprobador':
         return [
           ...commonItems.slice(0, 1), // Dashboard
           { id: 'approve-documents', label: 'Aprobar Comprobantes', icon: CheckSquare },
           ...commonItems.slice(1), // Centro de Documentación y Comunicados
-          { id: 'feedback-admin', label: 'Ver Encuestas', icon: Star }
         ];
       
       default:

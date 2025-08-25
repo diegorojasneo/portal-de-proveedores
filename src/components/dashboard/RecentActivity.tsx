@@ -54,36 +54,6 @@ export const RecentActivity: React.FC = () => {
         });
       });
       
-    } else if (user?.role === 'operaciones') {
-      // Solo proveedores aprobados y registros de pago
-      const recentSuppliers = suppliers.slice(0, 2); // Ya filtrados por rol
-      const recentPayments = paymentRecords.slice(0, 3); // Ya filtrados por rol
-      
-      recentSuppliers.forEach(supplier => {
-        activities.push({
-          id: supplier.id,
-          type: 'supplier',
-          title: `🏢 ${supplier.businessName}`,
-          status: supplier.status,
-          date: supplier.createdAt,
-          description: 'Proveedor aprobado disponible'
-        });
-      });
-      
-      // 🔄 MOSTRAR REGISTROS DE PAGOS RECIENTES
-      recentPayments.forEach(payment => {
-        activities.push({
-          id: payment.id,
-          type: 'payment',
-          title: `💰 Pago: ${payment.documentNumber}`,
-          status: payment.paymentStatus,
-          date: payment.createdAt,
-          description: payment.amount && payment.currency 
-            ? `${payment.currency} ${payment.amount.toLocaleString()} - ${payment.supplierName || 'Proveedor'}`
-            : `Por completar - ${payment.supplierName || 'Proveedor'}`
-        });
-      });
-      
     } else if (user?.role === 'aprobador') {
       // Solo documentos pendientes de aprobación
       const pendingDocs = documents.slice(0, 5); // Ya filtrados por rol

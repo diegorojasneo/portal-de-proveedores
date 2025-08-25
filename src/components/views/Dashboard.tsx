@@ -18,6 +18,7 @@ export const Dashboard: React.FC = () => {
 
   // Check if user has completed registration (only for providers)
   const registrationCompleted = user?.role === 'proveedor' ? hasCompletedRegistration(user?.id || '') : true;
+  
   return (
     <div className="space-y-8">
       {/* Welcome Header */}
@@ -124,31 +125,15 @@ export const Dashboard: React.FC = () => {
                     </div>
                   </div>
                 </div>
-      {/* Stats */}
-      <DashboardStats />
-
-                {/* Additional Information */}
-                <div className="mt-6 p-4 bg-blue-100 rounded-lg border border-blue-300">
-                  <div className="flex items-start space-x-3">
-                    <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="font-montserrat font-semibold text-blue-800 mb-2">
-                        📧 Información Importante
-                      </h4>
-                      <ul className="text-sm font-montserrat text-blue-700 space-y-1">
-                        <li>• Una vez completado el registro, recibirás un correo de confirmación</li>
-                        <li>• El proceso de validación puede tomar hasta 24-48 horas</li>
-                        <li>• Para consultas, contacta a: alisson.trauco@neo.com.pe</li>
-                        <li>• Todos los campos marcados con (*) son obligatorios</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </CardContent>
         </Card>
       )}
+
+      {/* Stats */}
+      <DashboardStats />
+                {/* Additional Information */}
       {/* Recent Activity */}
       <RecentActivity />
     </div>

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '../lib/supabase';
 import { User } from '../types';
 
 interface AuthContextType {
@@ -6,7 +7,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
-  requestPasswordReset: (email: string) => Promise<boolean>;
+  resetPassword: (email: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,36 +20,6 @@ export const useAuth = () => {
   return context;
 };
 
-// Mock users for demo
-const mockUsers: User[] = [
-  {
-    id: '550e8400-e29b-41d4-a716-446655440001',
-    email: 'proveedor@example.com',
-    name: 'Juan Pérez',
-    role: 'proveedor',
-    company: 'Empresa ABC SAC',
-    ruc: '20123456789',
-    createdAt: new Date('2024-01-15'),
-    lastLogin: new Date('2024-12-10')
-  },
-  {
-    id: '550e8400-e29b-41d4-a716-446655440002',
-    email: 'operaciones@neoconsulting.com',
-    name: 'María González',
-    role: 'operaciones',
-    createdAt: new Date('2024-01-01'),
-    lastLogin: new Date('2024-12-10')
-  },
-  {
-    id: '550e8400-e29b-41d4-a716-446655440003',
-    email: 'aprobador@neoconsulting.com',
-    name: 'Carlos Rodríguez',
-    role: 'aprobador',
-    createdAt: new Date('2024-01-01'),
-    lastLogin: new Date('2024-12-10')
-  }
-];
-
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -58,47 +29,132 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored session
-    const storedUser = localStorage.getItem('neo-user');
-    if (storedUser) {
+    // Check for existing session
+    const checkSession = async () => {
       try {
-        const userData = JSON.parse(storedUser);
-        setUser(userData);
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          // Get additional user info from portal_users table
+          const { data: portalUser } = await supabase
+            .from('portal_users')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .single();
+
+          if (portalUser) {
+            const userData: User = {
+              id: portalUser.user_id,
+              email: portalUser.email,
+              name: portalUser.full_name || 'Usuario',
+              role: portalUser.role as 'proveedor' | 'aprobador',
+              createdAt: new Date(portalUser.created_at),
+              lastLogin: new Date()
+            };
+            setUser(userData);
+          }
+        }
       } catch (error) {
-        localStorage.removeItem('neo-user');
+        console.error('Error checking session:', error);
       }
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    };
+
+    checkSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          // Get additional user info from portal_users table
+          const { data: portalUser } = await supabase
+            .from('portal_users')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .single();
+
+          if (portalUser) {
+            const userData: User = {
+              id: portalUser.user_id,
+              email: portalUser.email,
+              name: portalUser.full_name || 'Usuario',
+              role: portalUser.role as 'proveedor' | 'aprobador',
+              createdAt: new Date(portalUser.created_at),
+              lastLogin: new Date()
+            };
+            setUser(userData);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const foundUser = mockUsers.find(u => u.email === email);
-    
-    if (foundUser && password === 'password123') {
-      const updatedUser = { ...foundUser, lastLogin: new Date() };
-      setUser(updatedUser);
-      localStorage.setItem('neo-user', JSON.stringify(updatedUser));
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        setIsLoading(false);
+        return false;
+      }
+
+      if (data.user) {
+        // Get additional user info from portal_users table
+        const { data: portalUser } = await supabase
+          .from('portal_users')
+          .select('*')
+          .eq('user_id', data.user.id)
+          .single();
+
+        if (portalUser) {
+          const userData: User = {
+            id: portalUser.user_id,
+            email: portalUser.email,
+            name: portalUser.full_name || 'Usuario',
+            role: portalUser.role as 'proveedor' | 'aprobador',
+            createdAt: new Date(portalUser.created_at),
+            lastLogin: new Date()
+          };
+          setUser(userData);
+          setIsLoading(false);
+          return true;
+        }
+      }
+      
       setIsLoading(false);
-      return true;
+      return false;
+    } catch (error) {
+      console.error('Login error:', error);
+      setIsLoading(false);
+      return false;
     }
-    
-    setIsLoading(false);
-    return false;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem('neo-user');
   };
 
-  const requestPasswordReset = async (email: string): Promise<boolean> => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return mockUsers.some(u => u.email === email);
+  const resetPassword = async (email: string): Promise<boolean> => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`
+      });
+      
+      return !error;
+    } catch (error) {
+      console.error('Password reset error:', error);
+      return false;
+    }
   };
 
   const value = {
@@ -106,7 +162,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     logout,
     isLoading,
-    requestPasswordReset
+    resetPassword
   };
 
   return (

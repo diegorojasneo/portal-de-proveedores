@@ -26,7 +26,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
 
     const success = await login(email, password);
     if (!success) {
-      setError('Credenciales incorrectas. Intenta nuevamente.');
+      setError('Credenciales incorrectas o usuario no autorizado. Intenta nuevamente.');
     }
   };
 
@@ -114,16 +114,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
         </div>
 
         {/* Demo Credentials */}
-        <div className="mt-8 bg-neo-gray-50 rounded-lg p-4">
-          <h3 className="font-montserrat font-semibold text-neo-primary text-sm mb-2">
-            Credenciales de Demo:
-          </h3>
-          <div className="space-y-1 text-xs font-montserrat text-neo-gray-600">
-            <p><strong>Proveedor:</strong> proveedor@example.com</p>
-            <p><strong>Operaciones:</strong> operaciones@neoconsulting.com</p>
-            <p><strong>Aprobador:</strong> aprobador@neoconsulting.com</p>
-            <p><strong>Contraseña:</strong> password123</p>
-          </div>
+        <div className="mt-8 bg-neo-gray-50 rounded-lg p-4 text-center">
+          <p className="text-sm font-montserrat text-neo-gray-600">
+            ¿No tienes cuenta? Contacta al administrador del sistema
+          </p>
         </div>
       </div>
     </div>
