@@ -34,6 +34,9 @@ interface AppContextType {
   notifications: Notification[];
   markNotificationAsRead: (id: string) => void;
   addNotification: (notification: Omit<Notification, 'id' | 'createdAt' | 'read'>) => void;
+  
+  // Registration status
+  hasCompletedRegistration: (userId: string) => boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -305,6 +308,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     ));
   };
 
+  const hasCompletedRegistration = (userId: string): boolean => {
+    // Check if supplier has completed registration
+    const supplier = suppliers.find(s => s.id === userId);
+    return supplier ? supplier.status === 'approved' : false;
+  };
+
   const value = {
     documents,
     addDocument,
@@ -324,7 +333,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     submitFeedback,
     notifications,
     markNotificationAsRead,
-    addNotification
+    addNotification,
+    hasCompletedRegistration
   };
 
   return (
