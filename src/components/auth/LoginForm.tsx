@@ -131,7 +131,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
               <p><strong>Aprobador:</strong> aprobador@test.com / password123</p>
             </div>
             <div className="bg-white rounded p-2 border">
-              <p><strong>Operaciones:</strong> operaciones@test.com / password123</p>
+              <p><strong>Operaciones (Admin):</strong> operaciones@test.com / password123</p>
             </div>
           </div>
         </div>
