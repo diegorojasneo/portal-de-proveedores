@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
-import { Input } from '../ui/Input';
 
 interface LoginFormProps {
   onForgotPassword: () => void;
@@ -52,12 +51,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Mail className="h-5 w-5 text-neo-gray-400" />
             </div>
-            <Input
+            <input
               type="email"
               placeholder="Correo electrónico"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="pl-10"
+              className="w-full pl-10 pr-4 py-3 border border-neo-gray-300 rounded-lg font-montserrat focus:outline-none focus:ring-2 focus:ring-neo-accent focus:border-transparent"
               required
             />
           </div>
@@ -66,17 +65,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Lock className="h-5 w-5 text-neo-gray-400" />
             </div>
-            <Input
+            <input
               type={showPassword ? 'text' : 'password'}
               placeholder="Contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="pl-10 pr-10"
+              className="w-full pl-10 pr-10 py-3 border border-neo-gray-300 rounded-lg font-montserrat focus:outline-none focus:ring-2 focus:ring-neo-accent focus:border-transparent"
               required
             />
             <button
               type="button"
-              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center hover:bg-gray-50 rounded-r-lg transition-colors"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? (
@@ -97,9 +96,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
             type="submit"
             size="large"
             isLoading={isLoading}
-            className="w-full"
+            className="w-full bg-neo-accent hover:bg-blue-700 text-white font-montserrat font-semibold py-3 px-6 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neo-accent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading}
           >
-            Iniciar Sesión
+            {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </Button>
         </form>
 

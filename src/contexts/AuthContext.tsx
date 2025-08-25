@@ -94,15 +94,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    setIsLoading(true);
-    
     try {
+      setIsLoading(true);
+      setError('');
+    
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
 
       if (error) {
+        console.error('Login error:', error);
         setIsLoading(false);
         return false;
       }
@@ -127,6 +129,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(userData);
           setIsLoading(false);
           return true;
+        } else {
+          console.error('No portal user found for authenticated user');
+          setIsLoading(false);
+          return false;
         }
       }
       
