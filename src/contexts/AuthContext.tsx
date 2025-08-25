@@ -4,6 +4,7 @@ import { User } from '../types';
 
 interface AuthContextType {
   user: User | null;
+  isCheckingSession: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
@@ -63,14 +64,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUser(userData);
           } else {
             console.log('❌ No portal user found for authenticated user');
+            // Try to find user by email as fallback
+            const { data: portalUserByEmail } = await supabase
+              .from('portal_users')
+              .select('*')
+              .eq('email', session.user.email)
+              .single();
+
+            if (portalUserByEmail) {
+              console.log('✅ Found portal user by email:', portalUserByEmail);
+              const userData: User = {
+                id: portalUserByEmail.id,
+                email: portalUserByEmail.email,
+                name: portalUserByEmail.full_name || 'Usuario',
+                role: portalUserByEmail.role as 'proveedor' | 'aprobador' | 'operaciones',
+                createdAt: new Date(portalUserByEmail.created_at),
+                lastLogin: new Date()
+              };
+              setUser(userData);
+            }
           }
         } else {
           console.log('❌ No authenticated session found');
         }
       } catch (error) {
         console.error('Error checking session:', error);
+      } finally {
+        setIsCheckingSession(false);
       }
-      setIsCheckingSession(false);
     };
 
     checkSession();
@@ -100,6 +121,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               lastLogin: new Date()
             };
             setUser(userData);
+          } else {
+            // Try to find user by email as fallback
+            const { data: portalUserByEmail } = await supabase
+              .from('portal_users')
+              .select('*')
+              .eq('email', session.user.email)
+              .single();
+
+            if (portalUserByEmail) {
+              const userData: User = {
+                id: portalUserByEmail.id,
+                email: portalUserByEmail.email,
+                name: portalUserByEmail.full_name || 'Usuario',
+                role: portalUserByEmail.role as 'proveedor' | 'aprobador' | 'operaciones',
+                createdAt: new Date(portalUserByEmail.created_at),
+                lastLogin: new Date()
+              };
+              setUser(userData);
+            }
           }
         } else if (event === 'SIGNED_OUT') {
           console.log('👋 User signed out');
@@ -155,13 +195,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return true;
         } else {
           console.error('❌ No portal user found for authenticated user ID:', data.user.id);
-          console.log('💡 Available portal users:');
           
-          // Debug: Show all portal users
-          const { data: allPortalUsers } = await supabase
+          // Try to find user by email as fallback
+          const { data: portalUserByEmail } = await supabase
             .from('portal_users')
-            .select('*');
-          console.table(allPortalUsers);
+            .select('*')
+            .eq('email', data.user.email)
+            .single();
+
+          if (portalUserByEmail) {
+            console.log('✅ Found portal user by email after login:', portalUserByEmail);
+            const userData: User = {
+              id: portalUserByEmail.id,
+              email: portalUserByEmail.email,
+              name: portalUserByEmail.full_name || 'Usuario',
+              role: portalUserByEmail.role as 'proveedor' | 'aprobador' | 'operaciones',
+              createdAt: new Date(portalUserByEmail.created_at),
+              lastLogin: new Date()
+            };
+            setUser(userData);
+            setIsLoading(false);
+            return true;
+          }
           
           setIsLoading(false);
           return false;
@@ -197,6 +252,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value = {
     user,
+    isCheckingSession,
     login,
     logout,
     isLoading,
