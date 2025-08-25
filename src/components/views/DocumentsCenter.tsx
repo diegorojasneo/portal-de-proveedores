@@ -13,7 +13,7 @@ export const DocumentsCenter: React.FC = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
-  const canUpload = user?.role === 'operaciones';
+  const canUpload = false; // Only operations can upload, but operations role removed
 
   const documentCategories = [
     { value: 'all', label: 'Todos los Documentos' },

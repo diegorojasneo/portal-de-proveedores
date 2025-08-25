@@ -14,7 +14,7 @@ export const AnnouncementsView: React.FC = () => {
   const { user } = useAuth();
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const canCreateAnnouncements = user?.role === 'operaciones';
+  const canCreateAnnouncements = false; // Only operations can create, but operations role removed
 
   // Filter announcements based on user role and targeting
   const userAnnouncements = announcements.filter(announcement => 

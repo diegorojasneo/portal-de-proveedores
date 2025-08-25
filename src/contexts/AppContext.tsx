@@ -278,6 +278,7 @@ const mockSuppliers: Supplier[] = [
 const mockPaymentRecords: PaymentRecord[] = [
   {
     id: '1',
+    comprobante_id: '1',
     documentNumber: 'F001-00123', // 🎯 Extraído del documento
     supplierId: '1',
     supplierName: 'Empresa ABC Sociedad Anónima Cerrada',
@@ -291,6 +292,7 @@ const mockPaymentRecords: PaymentRecord[] = [
   },
   {
     id: '2',
+    comprobante_id: '2',
     documentNumber: 'B001-00456', // 🎯 Extraído del documento
     supplierId: '1',
     supplierName: 'Empresa ABC Sociedad Anónima Cerrada',
@@ -456,10 +458,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         // Validador: Solo documentos pendientes de aprobación
         return documents.filter(doc => doc.status === 'pending');
         
-      case 'operaciones':
-        // Administrador: Solo documentos aprobados para gestión de pagos
-        return documents.filter(doc => doc.status === 'approved');
-        
       default:
         return documents;
     }
@@ -474,12 +472,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         return suppliers.filter(supplier => supplier.id === user.id);
         
       case 'aprobador':
-        // Validador: Solo proveedores pendientes de aprobación
-        return suppliers.filter(supplier => supplier.status === 'pending');
-        
-      case 'operaciones':
-        // Administrador: Solo proveedores aprobados
-        return suppliers.filter(supplier => supplier.status === 'approved');
+        // Validador: No necesita ver proveedores
+        return [];
         
       default:
         return suppliers;
@@ -497,10 +491,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       case 'aprobador':
         // Validador: No necesita ver registros de pago
         return [];
-        
-      case 'operaciones':
-        // Administrador: Todos los registros de pago para gestión
-        return paymentRecords;
         
       default:
         return paymentRecords;
