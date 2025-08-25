@@ -330,12 +330,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     addDocument,
     approveDocument,
     rejectDocument,
+    getFilteredDocuments,
     suppliers,
     addSupplier,
     approveSupplier,
     rejectSupplier,
     disableSupplier,
     resetSupplierPassword,
+    getFilteredSuppliers,
     companyDocuments,
     addCompanyDocument,
     announcements,
@@ -345,6 +347,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     notifications,
     markNotificationAsRead,
     addNotification,
+    getFilteredPaymentRecords,
+    stats,
+    fetchSupplierStats,
+    fetchOperationsStats,
+    fetchApproverInbox,
     hasCompletedRegistration
   };
 
