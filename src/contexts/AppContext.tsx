@@ -48,6 +48,11 @@ interface AppContextType {
   
   // Registration status
   hasCompletedRegistration: (userId: string) => boolean;
+  
+  // Additional functions for operations and approvers
+  submitSupplierRegistration: (data: any) => void;
+  updatePaymentRecord: (id: string, updates: any) => void;
+  paymentsQueue: any[];
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -189,6 +194,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [announcements, setAnnouncements] = useState<Announcement[]>(mockAnnouncements);
   const [feedbackSurveys, setFeedbackSurveys] = useState<FeedbackSurvey[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [paymentsQueue, setPaymentsQueue] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>(null);
 
   const addDocument = (doc: Omit<Document, 'id' | 'createdAt' | 'status' | 'paymentStatus'>) => {
     const newDoc: Document = {
@@ -325,6 +332,28 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     return supplier ? supplier.status === 'approved' : false;
   };
 
+  const submitSupplierRegistration = (data: any) => {
+    // Mock implementation for supplier registration
+    console.log('Supplier registration submitted:', data);
+    addNotification({
+      userId: user?.id || '1',
+      title: 'Registro enviado',
+      message: 'Su registro ha sido enviado para revisión.',
+      type: 'success'
+    });
+  };
+
+  const updatePaymentRecord = (id: string, updates: any) => {
+    // Mock implementation for updating payment records
+    console.log('Payment record updated:', id, updates);
+    addNotification({
+      userId: user?.id || '1',
+      title: 'Pago actualizado',
+      message: 'La información de pago ha sido actualizada.',
+      type: 'info'
+    });
+  };
+
   const value = {
     documents,
     addDocument,
@@ -352,7 +381,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     fetchSupplierStats,
     fetchOperationsStats,
     fetchApproverInbox,
-    hasCompletedRegistration
+    hasCompletedRegistration,
+    submitSupplierRegistration,
+    updatePaymentRecord,
+    paymentsQueue
   };
 
   return (
