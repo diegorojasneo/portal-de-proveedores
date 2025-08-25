@@ -475,6 +475,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         // Validador: No necesita ver proveedores
         return [];
         
+      case 'operaciones':
+        // Operaciones: Todos los proveedores
+        return suppliers;
+        
       default:
         return suppliers;
     }
@@ -491,6 +495,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       case 'aprobador':
         // Validador: No necesita ver registros de pago
         return [];
+        
+      case 'operaciones':
+        // Operaciones: Todos los registros de pago
+        return paymentRecords;
         
       default:
         return paymentRecords;

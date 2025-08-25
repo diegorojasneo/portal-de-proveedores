@@ -2,7 +2,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'proveedor' | 'aprobador';
+  role: 'proveedor' | 'aprobador' | 'operaciones';
   company?: string;
   ruc?: string;
   avatar?: string;

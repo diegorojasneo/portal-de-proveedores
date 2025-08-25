@@ -32,7 +32,8 @@ export const Navbar: React.FC = () => {
   const getRoleName = (role: string) => {
     const roles = {
       proveedor: 'Proveedor',
-      aprobador: 'Aprobador'
+      aprobador: 'Aprobador',
+      operaciones: 'Administrador'
     };
     return roles[role as keyof typeof roles] || role;
   };

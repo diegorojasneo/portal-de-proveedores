@@ -27,7 +27,7 @@ export interface Database {
           user_id: string;
           email: string;
           full_name: string | null;
-          role: 'proveedor' | 'aprobador';
+          role: 'proveedor' | 'aprobador' | 'operaciones';
           is_active: boolean;
           created_at: string;
           updated_at: string;
@@ -37,7 +37,7 @@ export interface Database {
           user_id: string;
           email: string;
           full_name?: string | null;
-          role: 'proveedor' | 'aprobador';
+          role: 'proveedor' | 'aprobador' | 'operaciones';
           is_active?: boolean;
           created_at?: string;
           updated_at?: string;
@@ -47,7 +47,7 @@ export interface Database {
           user_id?: string;
           email?: string;
           full_name?: string | null;
-          role?: 'proveedor' | 'aprobador';
+          role?: 'proveedor' | 'aprobador' | 'operaciones';
           is_active?: boolean;
           created_at?: string;
           updated_at?: string;

@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               id: portalUser.user_id,
               email: portalUser.email,
               name: portalUser.full_name || 'Usuario',
-              role: portalUser.role as 'proveedor' | 'aprobador',
+              role: portalUser.role as 'proveedor' | 'aprobador' | 'operaciones',
               createdAt: new Date(portalUser.created_at),
               lastLogin: new Date()
             };
@@ -78,7 +78,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               id: portalUser.user_id,
               email: portalUser.email,
               name: portalUser.full_name || 'Usuario',
-              role: portalUser.role as 'proveedor' | 'aprobador',
+              role: portalUser.role as 'proveedor' | 'aprobador' | 'operaciones',
               createdAt: new Date(portalUser.created_at),
               lastLogin: new Date()
             };
@@ -120,7 +120,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             id: portalUser.user_id,
             email: portalUser.email,
             name: portalUser.full_name || 'Usuario',
-            role: portalUser.role as 'proveedor' | 'aprobador',
+            role: portalUser.role as 'proveedor' | 'aprobador' | 'operaciones',
             createdAt: new Date(portalUser.created_at),
             lastLogin: new Date()
           };

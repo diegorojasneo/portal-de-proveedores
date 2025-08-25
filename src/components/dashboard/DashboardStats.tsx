@@ -30,6 +30,8 @@ export const DashboardStats: React.FC = () => {
       fetchOperationsStats();
     } else if (user?.role === 'aprobador' && user?.email) {
       fetchApproverInbox(user.email);
+    } else if (user?.role === 'operaciones') {
+      fetchOperationsStats();
     }
   }, [user, fetchSupplierStats, fetchOperationsStats, fetchApproverInbox]);
   const getStats = () => {

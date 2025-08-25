@@ -52,6 +52,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, onColl
           ...commonItems.slice(1), // Centro de Documentación y Comunicados
         ];
       
+      case 'operaciones':
+        return [
+          ...commonItems.slice(0, 1), // Dashboard
+          { id: 'suppliers-management', label: 'Gestión de Proveedores', icon: Building2 },
+          { id: 'suppliers-review', label: 'Revisar Proveedores', icon: UserCheck },
+          { id: 'all-documents', label: 'Todos los Comprobantes', icon: FileText },
+          { id: 'payments-admin', label: 'Administrar Pagos', icon: DollarSign },
+          { id: 'feedback-admin', label: 'Feedback Proveedores', icon: Star },
+          ...commonItems.slice(1), // Centro de Documentación y Comunicados
+        ];
+      
       default:
         return commonItems;
     }

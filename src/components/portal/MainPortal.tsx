@@ -10,6 +10,11 @@ import { AnnouncementsView } from '../views/AnnouncementsView';
 import { FeedbackView } from '../views/FeedbackView';
 import { ApproveDocuments } from '../views/ApproveDocuments';
 import { SupplierConfiguration } from '../views/SupplierConfiguration';
+import { SuppliersManagement } from '../views/SuppliersManagement';
+import { SuppliersReview } from '../views/SuppliersReview';
+import { AllDocuments } from '../views/AllDocuments';
+import { PaymentsAdmin } from '../views/PaymentsAdmin';
+import { FeedbackAdmin } from '../views/FeedbackAdmin';
 
 export const MainPortal: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -35,6 +40,16 @@ export const MainPortal: React.FC = () => {
         return <ApproveDocuments />;
       case 'configuration':
         return <SupplierConfiguration />;
+      case 'suppliers-management':
+        return <SuppliersManagement />;
+      case 'suppliers-review':
+        return <SuppliersReview />;
+      case 'all-documents':
+        return <AllDocuments />;
+      case 'payments-admin':
+        return <PaymentsAdmin />;
+      case 'feedback-admin':
+        return <FeedbackAdmin />;
       default:
         return <Dashboard />;
     }
