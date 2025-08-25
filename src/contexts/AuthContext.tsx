@@ -34,9 +34,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const checkSession = async () => {
       try {
         setIsCheckingSession(true);
+        console.log('🔍 Checking for existing session...');
         const { data: { session } } = await supabase.auth.getSession();
         
+        console.log('📋 Session data:', session);
+        
         if (session?.user) {
+          console.log('👤 Found authenticated user:', session.user.email);
           // Get additional user info from portal_users table
           const { data: portalUser } = await supabase
             .from('portal_users')
@@ -44,6 +48,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             .eq('user_id', session.user.id)
             .single();
 
+          console.log('🏢 Portal user data:', portalUser);
+          
           if (portalUser) {
             const userData: User = {
               id: portalUser.user_id,
@@ -53,8 +59,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               createdAt: new Date(portalUser.created_at),
               lastLogin: new Date()
             };
+            console.log('✅ Setting user data:', userData);
             setUser(userData);
+          } else {
+            console.log('❌ No portal user found for authenticated user');
           }
+        } else {
+          console.log('❌ No authenticated session found');
         }
       } catch (error) {
         console.error('Error checking session:', error);
@@ -67,7 +78,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('🔄 Auth state changed:', event);
         if (event === 'SIGNED_IN' && session?.user) {
+          console.log('👤 User signed in:', session.user.email);
           // Get additional user info from portal_users table
           const { data: portalUser } = await supabase
             .from('portal_users')
@@ -75,6 +88,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             .eq('user_id', session.user.id)
             .single();
 
+          console.log('🏢 Portal user for signed in user:', portalUser);
+          
           if (portalUser) {
             const userData: User = {
               id: portalUser.user_id,
@@ -87,6 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUser(userData);
           }
         } else if (event === 'SIGNED_OUT') {
+          console.log('👋 User signed out');
           setUser(null);
         }
       }
@@ -98,6 +114,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
+      console.log('🔐 Attempting login for:', email);
     
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -105,19 +122,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       if (error) {
-        console.error('Login error:', error);
+        console.error('❌ Login error:', error.message);
         setIsLoading(false);
         return false;
       }
 
+      console.log('✅ Auth successful, user:', data.user?.email);
+      
       if (data.user) {
         // Get additional user info from portal_users table
+        console.log('🔍 Looking up portal user for ID:', data.user.id);
         const { data: portalUser } = await supabase
           .from('portal_users')
           .select('*')
           .eq('user_id', data.user.id)
           .single();
 
+        console.log('🏢 Portal user lookup result:', portalUser);
+        
         if (portalUser) {
           const userData: User = {
             id: portalUser.user_id,
@@ -127,11 +149,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             createdAt: new Date(portalUser.created_at),
             lastLogin: new Date()
           };
+          console.log('✅ Setting user data after login:', userData);
           setUser(userData);
           setIsLoading(false);
           return true;
         } else {
-          console.error('No portal user found for authenticated user');
+          console.error('❌ No portal user found for authenticated user ID:', data.user.id);
+          console.log('💡 Available portal users:');
+          
+          // Debug: Show all portal users
+          const { data: allPortalUsers } = await supabase
+            .from('portal_users')
+            .select('*');
+          console.table(allPortalUsers);
+          
           setIsLoading(false);
           return false;
         }
