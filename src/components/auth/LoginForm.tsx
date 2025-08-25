@@ -121,7 +121,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
         {/* Demo Credentials */}
         <div className="mt-8 bg-neo-gray-50 rounded-lg p-4 text-center">
           <p className="text-sm font-montserrat text-neo-gray-600 mb-3">
-            Usuarios de prueba:
+            Credenciales de prueba:
           </p>
           <div className="space-y-2 text-xs font-montserrat text-neo-gray-700">
             <div className="bg-white rounded p-2 border">
@@ -131,7 +131,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
               <p><strong>Aprobador:</strong> aprobador@test.com / password123</p>
             </div>
             <div className="bg-white rounded p-2 border">
-              <p><strong>Administrador:</strong> operaciones@test.com / password123</p>
+              <p><strong>Operaciones:</strong> operaciones@test.com / password123</p>
             </div>
           </div>
         </div>
