@@ -26,12 +26,14 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
 
   useEffect(() => {
     // Check for existing session
     const checkSession = async () => {
       try {
+        setIsCheckingSession(true);
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
@@ -57,7 +59,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } catch (error) {
         console.error('Error checking session:', error);
       }
-      setIsLoading(false);
+      setIsCheckingSession(false);
     };
 
     checkSession();
@@ -96,7 +98,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
-      setError('');
     
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
