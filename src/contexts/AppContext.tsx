@@ -386,14 +386,58 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       .filter(doc => doc.status === 'approved')
       .map(doc => ({
         id: doc.id,
+        supplierId: doc.supplierId,
         documentNumber: doc.number,
         supplierName: suppliers.find(s => s.id === doc.supplierId)?.businessName || 'Proveedor',
         amount: doc.amount,
         currency: doc.currency,
         paymentStatus: doc.paymentStatus,
         estimatedPaymentDate: doc.estimatedPaymentDate,
-        approvedAt: doc.approvedAt
+        approvedAt: doc.approvedAt,
+        createdAt: doc.createdAt,
+        updatedAt: doc.updatedAt
       }));
+  };
+
+  const fetchSupplierStats = (userId: string) => {
+    const userDocs = documents.filter(doc => doc.supplierId === userId);
+    const approvedDocs = userDocs.filter(doc => doc.status === 'approved');
+    const pendingDocs = userDocs.filter(doc => doc.status === 'pending');
+    const totalAmount = approvedDocs.reduce((sum, doc) => sum + doc.amount, 0);
+    
+    setStats({
+      totalDocuments: userDocs.length,
+      approvedDocuments: approvedDocs.length,
+      pendingDocuments: pendingDocs.length,
+      totalAmount: totalAmount,
+      paymentsReceived: approvedDocs.filter(doc => doc.paymentStatus === 'paid').length
+    });
+  };
+
+  const fetchOperationsStats = () => {
+    const totalProviders = suppliers.length;
+    const activeProviders = suppliers.filter(s => s.status === 'approved').length;
+    const pendingReviews = suppliers.filter(s => s.status === 'pending').length;
+    const totalDocuments = documents.length;
+    
+    setStats({
+      totalProviders,
+      activeProviders,
+      pendingReviews,
+      totalDocuments
+    });
+  };
+
+  const fetchApproverInbox = (email: string) => {
+    const pendingDocs = documents.filter(doc => 
+      doc.approverEmail === email && doc.status === 'pending'
+    );
+    const totalAmount = pendingDocs.reduce((sum, doc) => sum + doc.amount, 0);
+    
+    setStats({
+      pendingDocuments: pendingDocs.length,
+      totalAmountToValidate: totalAmount
+    });
   };
 
   const value = {
