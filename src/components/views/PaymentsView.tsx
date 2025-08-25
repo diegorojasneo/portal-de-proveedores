@@ -38,8 +38,8 @@ export const PaymentsView: React.FC = () => {
   };
 
   // 🔄 NUEVA FUNCIÓN: Obtener estado de aprobación del documento
-  const getDocumentApprovalStatus = (paymentId: string) => {
-    const document = documents.find(doc => doc.id === paymentId);
+  const getDocumentApprovalStatus = (payment: any) => {
+    const document = documents.find(doc => doc.id === payment.comprobante_id);
     if (!document) {
       return <Badge variant="warning">Sin documento</Badge>;
     }
@@ -282,7 +282,7 @@ export const PaymentsView: React.FC = () => {
                         <td className="py-4 px-4">
                           <div className="flex items-center space-x-2">
                             <Award className="w-4 h-4 text-neo-accent" />
-                            {getDocumentApprovalStatus(payment.id)}
+                            {getDocumentApprovalStatus(payment)}
                           </div>
                         </td>
                         <td className="py-4 px-4">

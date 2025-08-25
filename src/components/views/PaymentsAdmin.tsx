@@ -13,7 +13,7 @@ export const PaymentsAdmin: React.FC = () => {
   const [selectedPayment, setSelectedPayment] = useState<any>(null);
 
   // ✅ USAR COLA DE PAGOS REAL DESDE VISTA: vw_operations_payments_queue
-  const paymentRecords = paymentsQueue || getFilteredPaymentRecords();
+  const paymentRecords = getFilteredPaymentRecords();
   const documents = getFilteredDocuments();
 
   const getSupplierName = (supplierId: string) => {

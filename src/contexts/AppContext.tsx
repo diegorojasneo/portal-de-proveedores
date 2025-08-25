@@ -50,6 +50,7 @@ interface SupplierRegistrationData {
 // 🔄 NUEVA INTERFAZ: Registro específico para el módulo de Pagos
 interface PaymentRecord {
   id: string;
+  comprobante_id: string; // 🔗 CAMPO PRINCIPAL: ID del comprobante relacionado
   documentNumber: string; // 🎯 CAMPO PRINCIPAL: Número de Documento extraído
   supplierId: string;
   supplierName?: string;
@@ -511,8 +512,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     try {
       // Find the actual supplier ID from the database using the current user
       const currentSupplier = suppliers.find(supplier => 
-        supplier.email_contacto === user?.email || 
-        supplier.user_id === user?.id
+        supplier.id === user?.id
       );
       
       if (!currentSupplier) {
@@ -688,7 +688,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         address: data.address,
         documentType: data.documentType,
         contactPerson: data.contactPerson,
-        contactPersonEmail: data.contactPersonEmail,
+        contactEmail: data.contactPersonEmail,
         phone: data.phone,
         neoContactEmail: data.neoContactEmail,
         bankName1: data.bankName1,

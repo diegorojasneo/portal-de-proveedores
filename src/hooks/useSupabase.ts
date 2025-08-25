@@ -7,7 +7,7 @@ type Views = Database['public']['Views'];
 
 // ✅ HOOK CORREGIDO: Gestionar proveedores con BD real
 export const useSuppliers = () => {
-  const [suppliers, setSuppliers] = useState<Tables['suppliers']['Row'][]>([]);
+  const [suppliers, setSuppliers] = useState<Tables['proveedores']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -146,7 +146,7 @@ export const useSuppliers = () => {
 
 // ✅ HOOK CORREGIDO: Gestionar documentos/facturas con BD real
 export const useDocuments = () => {
-  const [documents, setDocuments] = useState<Tables['invoices']['Row'][]>([]);
+  const [documents, setDocuments] = useState<Tables['comprobantes']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -260,7 +260,7 @@ export const useDocuments = () => {
 
 // ✅ HOOK CORREGIDO: Gestionar pagos con BD real
 export const usePayments = () => {
-  const [payments, setPayments] = useState<Tables['payments']['Row'][]>([]);
+  const [payments, setPayments] = useState<Tables['pagos']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -336,7 +336,7 @@ export const usePayments = () => {
 
 // ✅ HOOK CORREGIDO: Gestionar comunicados con BD real
 export const useAnnouncements = () => {
-  const [announcements, setAnnouncements] = useState<Tables['announcements']['Row'][]>([]);
+  const [announcements, setAnnouncements] = useState<Tables['comunicados']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -375,9 +375,8 @@ export const useAnnouncements = () => {
           contenido: announcementData.content,
           tipo: announcementData.type || 'general',
           urgente: announcementData.isUrgent || false,
-          audiencia: announcementData.targetRole === 'all' ? 'todos' : 'proveedores',
-          proveedor_id: announcementData.targetSupplier || null,
-          created_by_user: announcementData.createdBy
+          audiencia_todos: announcementData.targetRole === 'all',
+          created_by: announcementData.createdBy
         })
         .select();
 
@@ -406,7 +405,7 @@ export const useAnnouncements = () => {
 
 // ✅ HOOK CORREGIDO: Gestionar documentos de empresa con BD real
 export const useCompanyDocuments = () => {
-  const [companyDocuments, setCompanyDocuments] = useState<Tables['operations_documents']['Row'][]>([]);
+  const [companyDocuments, setCompanyDocuments] = useState<Tables['documentos_operaciones']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -445,9 +444,8 @@ export const useCompanyDocuments = () => {
           tipo: documentData.type,
           descripcion: documentData.description,
           archivo_url: documentData.fileUrl,
-          audiencia: documentData.supplierId ? 'proveedor_especifico' : 'todos',
-          proveedor_id: documentData.supplierId || null,
-          created_by_user: documentData.uploadedBy
+          audiencia_todos: !documentData.supplierId,
+          created_by: documentData.uploadedBy
         })
         .select();
 
@@ -476,7 +474,7 @@ export const useCompanyDocuments = () => {
 
 // ✅ HOOK CORREGIDO: Gestionar feedback con BD real
 export const useFeedbackSurveys = () => {
-  const [feedbackSurveys, setFeedbackSurveys] = useState<Tables['supplier_feedback']['Row'][]>([]);
+  const [feedbackSurveys, setFeedbackSurveys] = useState<Tables['encuestas_feedback']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -549,7 +547,7 @@ export const useFeedbackSurveys = () => {
 
 // ✅ HOOK NUEVO: Gestionar usuarios de operaciones
 export const useOperationsUsers = () => {
-  const [operationsUsers, setOperationsUsers] = useState<Tables['operations_users']['Row'][]>([]);
+  const [operationsUsers, setOperationsUsers] = useState<Tables['usuarios_operaciones']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -562,10 +560,9 @@ export const useOperationsUsers = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('app_users')
+        .from('usuarios_operaciones')
         .select('*')
-        .eq('activo', true)
-        .eq('perfil', 'operaciones')
+        .eq('is_active', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -591,7 +588,7 @@ export const useOperationsUsers = () => {
 
 // ✅ HOOK NUEVO: Gestionar directorio de aprobadores
 export const useApprovers = () => {
-  const [approvers, setApprovers] = useState<Tables['approver_directory']['Row'][]>([]);
+  const [approvers, setApprovers] = useState<Tables['directorio_aprobadores']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -604,10 +601,9 @@ export const useApprovers = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('app_users')
+        .from('directorio_aprobadores')
         .select('*')
-        .eq('activo', true)
-        .eq('perfil', 'aprobador')
+        .eq('is_active', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -697,7 +693,7 @@ export const useDashboardStats = () => {
       
       // ✅ USAR SUPABASE CLIENT: v_aprobador_inbox con aprobador_email
       const { data, error } = await supabase
-        .from('v_aprobador_inbox')
+        .from('v_bandeja_aprobador')
         .select('*')
         .eq('aprobador_email', approverEmail)
         .eq('status', 'pendiente');
@@ -738,7 +734,7 @@ export const usePaymentsQueue = () => {
       
       // ✅ USAR SUPABASE CLIENT: v_dashboard_operaciones
       const { data, error } = await supabase
-        .from('v_dashboard_operaciones')
+        .from('v_cola_pagos_operaciones')
         .select('*');
 
       if (error) throw error;

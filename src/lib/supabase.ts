@@ -42,8 +42,8 @@ export { supabase, isSupabaseConfigured };
 export interface Database {
   public: {
     Tables: {
-      // ✅ TABLA REAL: suppliers
-      suppliers: {
+      // ✅ TABLA REAL: proveedores
+      proveedores: {
         Row: {
           id: string;
           email_login: string | null;
@@ -54,12 +54,12 @@ export interface Database {
           tipo_persona: 'natural' | 'juridica';
           pais: string;
           direccion: string;
-          tipo_comprobante_emitir: 'factura' | 'boleta' | 'recibo' | 'otro';
+          tipo_comprobante_a_emitir: 'factura' | 'boleta' | 'recibo' | 'otro';
           ficha_ruc_url: string | null;
-          contacto_nombre: string | null;
-          contacto_email: string;
-          contacto_telefono: string | null;
-          solicitante_neo_email: string | null;
+          persona_contacto: string | null;
+          email_contacto: string;
+          telefono_contacto: string | null;
+          correo_neo_solicitante: string | null;
           is_active: boolean;
           created_at: string;
           updated_at: string;
@@ -74,12 +74,12 @@ export interface Database {
           tipo_persona: 'natural' | 'juridica';
           pais: string;
           direccion: string;
-          tipo_comprobante_emitir: 'factura' | 'boleta' | 'recibo' | 'otro';
+          tipo_comprobante_a_emitir: 'factura' | 'boleta' | 'recibo' | 'otro';
           ficha_ruc_url?: string | null;
-          contacto_nombre?: string | null;
-          contacto_email: string;
-          contacto_telefono?: string | null;
-          solicitante_neo_email?: string | null;
+          persona_contacto?: string | null;
+          email_contacto: string;
+          telefono_contacto?: string | null;
+          correo_neo_solicitante?: string | null;
           is_active?: boolean;
           created_at?: string;
           updated_at?: string;
@@ -94,253 +94,253 @@ export interface Database {
           tipo_persona?: 'natural' | 'juridica';
           pais?: string;
           direccion?: string;
-          tipo_comprobante_emitir?: 'factura' | 'boleta' | 'recibo' | 'otro';
+          tipo_comprobante_a_emitir?: 'factura' | 'boleta' | 'recibo' | 'otro';
           ficha_ruc_url?: string | null;
-          contacto_nombre?: string | null;
-          contacto_email?: string;
-          contacto_telefono?: string | null;
-          solicitante_neo_email?: string | null;
+          persona_contacto?: string | null;
+          email_contacto?: string;
+          telefono_contacto?: string | null;
+          correo_neo_solicitante?: string | null;
           is_active?: boolean;
           created_at?: string;
           updated_at?: string;
         };
       };
       
-      // ✅ TABLA REAL: supplier_bank_accounts
-      supplier_bank_accounts: {
+      // ✅ TABLA REAL: proveedor_cuentas_bancarias
+      proveedor_cuentas_bancarias: {
         Row: {
           id: string;
-          supplier_id: string;
+          proveedor_id: string;
           moneda: 'PEN' | 'USD';
           banco: string;
           numero_cuenta: string;
           tipo_cuenta: string;
-          codigo_cci: string | null;
-          is_primary: boolean;
+          cci: string | null;
+          es_principal: boolean;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
-          supplier_id: string;
+          proveedor_id: string;
           moneda: 'PEN' | 'USD';
           banco: string;
           numero_cuenta: string;
           tipo_cuenta: string;
-          codigo_cci?: string | null;
-          is_primary?: boolean;
+          cci?: string | null;
+          es_principal?: boolean;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
-          supplier_id?: string;
+          proveedor_id?: string;
           moneda?: 'PEN' | 'USD';
           banco?: string;
           numero_cuenta?: string;
           tipo_cuenta?: string;
-          codigo_cci?: string | null;
-          is_primary?: boolean;
+          cci?: string | null;
+          es_principal?: boolean;
           created_at?: string;
           updated_at?: string;
         };
       };
 
-      // ✅ TABLA REAL: invoices
-      invoices: {
+      // ✅ TABLA REAL: comprobantes
+      comprobantes: {
         Row: {
           id: string;
-          supplier_id: string;
+          proveedor_id: string;
           tipo_documento: 'factura' | 'boleta' | 'recibo' | 'otro';
           numero_documento: string;
           monto: number;
           moneda: 'PEN' | 'USD';
           tiene_detraccion: boolean;
-          correo_aprobador: string;
+          aprobador_email: string;
           servicio_realizado: string | null;
           comprobante_pdf_url: string | null;
           status: 'pendiente' | 'aprobado' | 'rechazado';
-          submitted_at: string;
+          fecha_registro: string;
           approved_at: string | null;
           rejected_at: string | null;
           aprobado_por: string | null;
-          rechazo_motivo: string | null;
+          motivo_rechazo: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
-          supplier_id: string;
+          proveedor_id: string;
           tipo_documento: 'factura' | 'boleta' | 'recibo' | 'otro';
           numero_documento: string;
           monto: number;
           moneda: 'PEN' | 'USD';
           tiene_detraccion?: boolean;
-          correo_aprobador: string;
+          aprobador_email: string;
           servicio_realizado?: string | null;
           comprobante_pdf_url?: string | null;
           status?: 'pendiente' | 'aprobado' | 'rechazado';
-          submitted_at?: string;
+          fecha_registro?: string;
           approved_at?: string | null;
           rejected_at?: string | null;
           aprobado_por?: string | null;
-          rechazo_motivo?: string | null;
+          motivo_rechazo?: string | null;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
-          supplier_id?: string;
+          proveedor_id?: string;
           tipo_documento?: 'factura' | 'boleta' | 'recibo' | 'otro';
           numero_documento?: string;
           monto?: number;
           moneda?: 'PEN' | 'USD';
           tiene_detraccion?: boolean;
-          correo_aprobador?: string;
+          aprobador_email?: string;
           servicio_realizado?: string | null;
           comprobante_pdf_url?: string | null;
           status?: 'pendiente' | 'aprobado' | 'rechazado';
-          submitted_at?: string;
+          fecha_registro?: string;
           approved_at?: string | null;
           rejected_at?: string | null;
           aprobado_por?: string | null;
-          rechazo_motivo?: string | null;
+          motivo_rechazo?: string | null;
           created_at?: string;
           updated_at?: string;
         };
       };
 
-      // ✅ TABLA REAL: payments
-      payments: {
+      // ✅ TABLA REAL: pagos
+      pagos: {
         Row: {
           id: string;
-          invoice_id: string;
-          amount: number;
-          currency: 'PEN' | 'USD';
-          status: 'pendiente' | 'programado' | 'pagado' | 'observado';
-          method: 'transferencia' | 'yape_plin' | 'cheque' | 'otro' | null;
-          estimated_payment_date: string | null;
-          paid_at: string | null;
-          bank_account_id: string | null;
-          notes: string | null;
+          comprobante_id: string;
+          monto: number;
+          moneda: 'PEN' | 'USD';
+          estado_pago: 'pendiente' | 'programado' | 'pagado' | 'observado';
+          metodo_pago: 'transferencia' | 'yape_plin' | 'cheque' | 'otro' | null;
+          fecha_estimada_pago: string | null;
+          fecha_pago: string | null;
+          cuenta_bancaria_id: string | null;
+          notas: string | null;
           created_by: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
-          invoice_id: string;
-          amount: number;
-          currency: 'PEN' | 'USD';
-          status?: 'pendiente' | 'programado' | 'pagado' | 'observado';
-          method?: 'transferencia' | 'yape_plin' | 'cheque' | 'otro' | null;
-          estimated_payment_date?: string | null;
-          paid_at?: string | null;
-          bank_account_id?: string | null;
-          notes?: string | null;
+          comprobante_id: string;
+          monto: number;
+          moneda: 'PEN' | 'USD';
+          estado_pago?: 'pendiente' | 'programado' | 'pagado' | 'observado';
+          metodo_pago?: 'transferencia' | 'yape_plin' | 'cheque' | 'otro' | null;
+          fecha_estimada_pago?: string | null;
+          fecha_pago?: string | null;
+          cuenta_bancaria_id?: string | null;
+          notas?: string | null;
           created_by?: string | null;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
-          invoice_id?: string;
-          amount?: number;
-          currency?: 'PEN' | 'USD';
-          status?: 'pendiente' | 'programado' | 'pagado' | 'observado';
-          method?: 'transferencia' | 'yape_plin' | 'cheque' | 'otro' | null;
-          estimated_payment_date?: string | null;
-          paid_at?: string | null;
-          bank_account_id?: string | null;
-          notes?: string | null;
+          comprobante_id?: string;
+          monto?: number;
+          moneda?: 'PEN' | 'USD';
+          estado_pago?: 'pendiente' | 'programado' | 'pagado' | 'observado';
+          metodo_pago?: 'transferencia' | 'yape_plin' | 'cheque' | 'otro' | null;
+          fecha_estimada_pago?: string | null;
+          fecha_pago?: string | null;
+          cuenta_bancaria_id?: string | null;
+          notas?: string | null;
           created_by?: string | null;
           created_at?: string;
           updated_at?: string;
         };
       };
 
-      // ✅ TABLA REAL: operations_documents
-      operations_documents: {
+      // ✅ TABLA REAL: documentos_operaciones
+      documentos_operaciones: {
         Row: {
           id: string;
-          title: string;
+          titulo: string;
           tipo: 'contrato' | 'orden_compra' | 'acuerdo_confidencialidad' | 'manual_guia' | 'otro';
-          description: string | null;
-          file_url: string;
-          published_at: string;
+          descripcion: string | null;
+          archivo_url: string;
+          fecha_publicacion: string;
           is_active: boolean;
-          audience_all: boolean;
+          audiencia_todos: boolean;
           created_by: string | null;
           created_at: string;
         };
         Insert: {
           id?: string;
-          title: string;
+          titulo: string;
           tipo: 'contrato' | 'orden_compra' | 'acuerdo_confidencialidad' | 'manual_guia' | 'otro';
-          description?: string | null;
-          file_url: string;
-          published_at?: string;
+          descripcion?: string | null;
+          archivo_url: string;
+          fecha_publicacion?: string;
           is_active?: boolean;
-          audience_all?: boolean;
+          audiencia_todos?: boolean;
           created_by?: string | null;
           created_at?: string;
         };
         Update: {
           id?: string;
-          title?: string;
+          titulo?: string;
           tipo?: 'contrato' | 'orden_compra' | 'acuerdo_confidencialidad' | 'manual_guia' | 'otro';
-          description?: string | null;
-          file_url?: string;
-          published_at?: string;
+          descripcion?: string | null;
+          archivo_url?: string;
+          fecha_publicacion?: string;
           is_active?: boolean;
-          audience_all?: boolean;
+          audiencia_todos?: boolean;
           created_by?: string | null;
           created_at?: string;
         };
       };
 
-      // ✅ TABLA REAL: announcements
-      announcements: {
+      // ✅ TABLA REAL: comunicados
+      comunicados: {
         Row: {
           id: string;
-          title: string;
+          titulo: string;
           tipo: 'general' | 'operativo' | 'financiero' | 'otro';
-          content: string;
-          published_at: string;
+          contenido: string;
+          fecha_publicacion: string;
           urgente: boolean;
-          audience_all: boolean;
+          audiencia_todos: boolean;
           created_by: string | null;
           created_at: string;
         };
         Insert: {
           id?: string;
-          title: string;
+          titulo: string;
           tipo?: 'general' | 'operativo' | 'financiero' | 'otro';
-          content: string;
-          published_at?: string;
+          contenido: string;
+          fecha_publicacion?: string;
           urgente?: boolean;
-          audience_all?: boolean;
+          audiencia_todos?: boolean;
           created_by?: string | null;
           created_at?: string;
         };
         Update: {
           id?: string;
-          title?: string;
+          titulo?: string;
           tipo?: 'general' | 'operativo' | 'financiero' | 'otro';
-          content?: string;
-          published_at?: string;
+          contenido?: string;
+          fecha_publicacion?: string;
           urgente?: boolean;
-          audience_all?: boolean;
+          audiencia_todos?: boolean;
           created_by?: string | null;
           created_at?: string;
         };
       };
 
-      // ✅ TABLA REAL: supplier_feedback
-      supplier_feedback: {
+      // ✅ TABLA REAL: encuestas_feedback
+      encuestas_feedback: {
         Row: {
           id: string;
-          supplier_id: string;
+          proveedor_id: string;
           comunicacion: number;
           puntualidad_pagos: number;
           facilidad_portal: number;
@@ -351,7 +351,7 @@ export interface Database {
         };
         Insert: {
           id?: string;
-          supplier_id: string;
+          proveedor_id: string;
           comunicacion: number;
           puntualidad_pagos: number;
           facilidad_portal: number;
@@ -362,7 +362,7 @@ export interface Database {
         };
         Update: {
           id?: string;
-          supplier_id?: string;
+          proveedor_id?: string;
           comunicacion?: number;
           puntualidad_pagos?: number;
           facilidad_portal?: number;
@@ -373,37 +373,37 @@ export interface Database {
         };
       };
 
-      // ✅ TABLA REAL: operations_users
-      operations_users: {
+      // ✅ TABLA REAL: usuarios_operaciones
+      usuarios_operaciones: {
         Row: {
           id: string;
           email: string;
-          full_name: string | null;
+          nombre_completo: string | null;
           is_active: boolean;
           created_at: string;
         };
         Insert: {
           id?: string;
           email: string;
-          full_name?: string | null;
+          nombre_completo?: string | null;
           is_active?: boolean;
           created_at?: string;
         };
         Update: {
           id?: string;
           email?: string;
-          full_name?: string | null;
+          nombre_completo?: string | null;
           is_active?: boolean;
           created_at?: string;
         };
       };
 
-      // ✅ TABLA REAL: approver_directory
-      approver_directory: {
+      // ✅ TABLA REAL: directorio_aprobadores
+      directorio_aprobadores: {
         Row: {
           id: string;
-          approver_email: string;
-          approver_name: string | null;
+          email_aprobador: string;
+          nombre_aprobador: string | null;
           area: string | null;
           is_active: boolean;
           created_at: string;
@@ -412,8 +412,8 @@ export interface Database {
         };
         Insert: {
           id?: string;
-          approver_email: string;
-          approver_name?: string | null;
+          email_aprobador: string;
+          nombre_aprobador?: string | null;
           area?: string | null;
           is_active?: boolean;
           created_at?: string;
@@ -422,8 +422,8 @@ export interface Database {
         };
         Update: {
           id?: string;
-          approver_email?: string;
-          approver_name?: string | null;
+          email_aprobador?: string;
+          nombre_aprobador?: string | null;
           area?: string | null;
           is_active?: boolean;
           created_at?: string;
@@ -433,10 +433,10 @@ export interface Database {
       };
     };
     Views: {
-      // ✅ VISTA REAL: vw_supplier_dashboard_resumen
-      vw_supplier_dashboard_resumen: {
+      // ✅ VISTA REAL: v_dashboard_proveedor
+      v_dashboard_proveedor: {
         Row: {
-          supplier_id: string | null;
+          proveedor_id: string | null;
           razon_social: string | null;
           comprobantes_registrados: number | null;
           comprobantes_aprobados: number | null;
@@ -447,8 +447,8 @@ export interface Database {
         };
       };
       
-      // ✅ VISTA REAL: vw_operations_dashboard_resumen
-      vw_operations_dashboard_resumen: {
+      // ✅ VISTA REAL: v_dashboard_operaciones
+      v_dashboard_operaciones: {
         Row: {
           total_comprobantes: number | null;
           total_aprobados: number | null;
@@ -459,26 +459,26 @@ export interface Database {
         };
       };
 
-      // ✅ VISTA REAL: vw_approver_inbox
-      vw_approver_inbox: {
+      // ✅ VISTA REAL: v_bandeja_aprobador
+      v_bandeja_aprobador: {
         Row: {
-          invoice_id: string | null;
+          comprobante_id: string | null;
           proveedor: string | null;
           numero_documento: string | null;
           monto: number | null;
           moneda: 'PEN' | 'USD' | null;
           tipo_documento: 'factura' | 'boleta' | 'recibo' | 'otro' | null;
           servicio_realizado: string | null;
-          submitted_at: string | null;
-          correo_aprobador: string | null;
+          fecha_registro: string | null;
+          aprobador_email: string | null;
           status: 'pendiente' | 'aprobado' | 'rechazado' | null;
         };
       };
 
-      // ✅ VISTA REAL: vw_operations_payments_queue
-      vw_operations_payments_queue: {
+      // ✅ VISTA REAL: v_cola_pagos_operaciones
+      v_cola_pagos_operaciones: {
         Row: {
-          invoice_id: string | null;
+          comprobante_id: string | null;
           proveedor: string | null;
           numero_documento: string | null;
           monto: number | null;
