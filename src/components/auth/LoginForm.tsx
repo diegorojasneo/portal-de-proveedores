@@ -17,13 +17,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    
+    console.log('📝 Form submitted with:', { email, password: '***' });
 
     if (!email || !password) {
       setError('Por favor ingresa todos los campos');
       return;
     }
 
+    console.log('🚀 Calling login function...');
     const success = await login(email, password);
+    console.log('📊 Login result:', success);
     
     if (!success) {
       setError('Credenciales incorrectas o usuario no autorizado. Intenta nuevamente.');
@@ -127,7 +131,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
               <p><strong>Aprobador:</strong> aprobador@test.com / password123</p>
             </div>
             <div className="bg-white rounded p-2 border">
-              <p><strong>Operaciones (Admin):</strong> operaciones@test.com / password123</p>
+              <p><strong>Operaciones:</strong> operaciones@test.com / password123</p>
             </div>
           </div>
         </div>

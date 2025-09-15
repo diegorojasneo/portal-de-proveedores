@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, DollarSign, Clock, CheckCircle, Building2 } from 'lucide-react';
+import { FileText, DollarSign, Clock, CheckCircle } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { useApp } from '../../contexts/AppContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -30,6 +30,8 @@ export const DashboardStats: React.FC = () => {
       fetchOperationsStats();
     } else if (user?.role === 'aprobador' && user?.email) {
       fetchApproverInbox(user.email);
+    } else if (user?.role === 'operaciones') {
+      fetchOperationsStats();
     }
   }, [user, fetchSupplierStats, fetchOperationsStats, fetchApproverInbox]);
   const getStats = () => {
@@ -75,36 +77,12 @@ export const DashboardStats: React.FC = () => {
       // Fallback a datos locales si no hay stats de BD
       return [
         {
-          title: 'Total Proveedores',
-          value: suppliers.length,
-          icon: Building2,
-          color: 'text-neo-accent',
-          bgColor: 'bg-blue-50',
-          subtitle: 'Proveedores registrados'
-        },
-        {
-          title: 'Proveedores Activos',
-          value: suppliers.filter(s => s.status === 'approved').length,
-          icon: CheckCircle,
-          color: 'text-neo-success',
-          bgColor: 'bg-green-50',
-          subtitle: 'Aprobados y activos'
-        },
-        {
-          title: 'Pendientes Revisión',
-          value: suppliers.filter(s => s.status === 'pending').length,
-          icon: Clock,
-          color: 'text-neo-warning',
-          bgColor: 'bg-yellow-50',
-          subtitle: 'Por revisar'
-        },
-        {
-          title: 'Total Documentos',
-          value: documents.length,
+          title: 'Comprobantes Registrados',
+          value: paymentRecords.length,
           icon: FileText,
           color: 'text-neo-accent',
           bgColor: 'bg-blue-50',
-          subtitle: 'Comprobantes procesados'
+          subtitle: 'Total registrados'
         },
         {
           title: 'Aprobados',
