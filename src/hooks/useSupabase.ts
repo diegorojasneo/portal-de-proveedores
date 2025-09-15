@@ -12,7 +12,7 @@ export const useSuppliers = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchSuppliers = async () => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       setLoading(false);
       return;
     }
@@ -37,7 +37,7 @@ export const useSuppliers = () => {
   };
 
   const createSupplier = async (supplierData: any) => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       throw new Error('Supabase not configured');
     }
 
@@ -110,7 +110,7 @@ export const useSuppliers = () => {
   };
 
   const updateSupplier = async (id: string, updates: any) => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       throw new Error('Supabase not configured');
     }
 
@@ -151,7 +151,7 @@ export const useDocuments = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchDocuments = async () => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       setLoading(false);
       return;
     }
@@ -176,7 +176,7 @@ export const useDocuments = () => {
   };
 
   const createDocument = async (documentData: any) => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       throw new Error('Supabase not configured');
     }
 
@@ -221,7 +221,7 @@ export const useDocuments = () => {
   };
 
   const updateDocument = async (id: string, updates: any) => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       throw new Error('Supabase not configured');
     }
 
@@ -294,7 +294,7 @@ export const usePayments = () => {
   };
 
   const updatePayment = async (id: string, updates: any) => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       throw new Error('Supabase not configured');
     }
 
@@ -363,7 +363,7 @@ export const useAnnouncements = () => {
   };
 
   const createAnnouncement = async (announcementData: any) => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       throw new Error('Supabase not configured');
     }
 
@@ -410,7 +410,7 @@ export const useCompanyDocuments = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchCompanyDocuments = async () => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       setLoading(false);
       return;
     }
@@ -432,7 +432,7 @@ export const useCompanyDocuments = () => {
   };
 
   const createCompanyDocument = async (documentData: any) => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       throw new Error('Supabase not configured');
     }
 
@@ -479,7 +479,7 @@ export const useFeedbackSurveys = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchFeedbackSurveys = async () => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       setLoading(false);
       return;
     }
@@ -504,7 +504,7 @@ export const useFeedbackSurveys = () => {
   };
 
   const createFeedbackSurvey = async (surveyData: any) => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       throw new Error('Supabase not configured');
     }
 
@@ -593,7 +593,7 @@ export const useApprovers = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchApprovers = async () => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       setLoading(false);
       return;
     }
@@ -680,7 +680,7 @@ export const useDashboardStats = () => {
   };
 
   const fetchOperationsStats = async () => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       setLoading(false);
       return;
     }
@@ -718,7 +718,7 @@ export const useDashboardStats = () => {
   };
 
   const fetchApproverInbox = async (approverEmail: string) => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       setLoading(false);
       return;
     }
@@ -762,7 +762,7 @@ export const usePaymentsQueue = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchPaymentsQueue = async () => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       setLoading(false);
       return;
     }
