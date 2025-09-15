@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
@@ -31,7 +30,6 @@ export const ApproveDocuments: React.FC = () => {
       fetchApproverInbox(user.email);
     }
   }, [user, fetchApproverInbox]);
-
 
   const getSupplierName = (supplierId: string) => {
     const supplier = suppliers.find(s => s.id === supplierId);
