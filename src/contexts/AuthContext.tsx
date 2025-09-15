@@ -4,6 +4,7 @@ import { User } from '../types';
 
 interface AuthContextType {
   user: User | null;
+  isCheckingSession: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
@@ -27,23 +28,44 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
 
   useEffect(() => {
     // Check for existing session
+    
+    if (!isSupabaseConfigured || !supabase) {
+      setLoading(false);
+      return;
+    }
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session?.user) {
-        // Create user object from session
-        const userData: User = {
-          id: session.user.id,
-          email: session.user.email || '',
-          name: session.user.user_metadata?.full_name || 'Usuario',
-          role: session.user.user_metadata?.role || 'proveedor',
-          createdAt: new Date(session.user.created_at),
-          lastLogin: new Date()
-        };
-        setUser(userData);
+      try {
+        setIsCheckingSession(true);
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          // Get additional user info from portal_users table
+          const { data: portalUser } = await supabase
+            .from('portal_users')
+            .select('*')
+            .eq('email', session.user.email)
+            .single();
+          
+          if (portalUser) {
+            const userData: User = {
+              id: portalUser.id,
+              email: portalUser.email,
+              name: portalUser.full_name || 'Usuario',
+              role: portalUser.role as 'proveedor' | 'aprobador' | 'operaciones',
+              createdAt: new Date(portalUser.created_at),
+              lastLogin: new Date()
+            };
+            setUser(userData);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+      } finally {
+        setIsCheckingSession(false);
       }
     };
 
@@ -53,15 +75,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_IN' && session?.user) {
-          const userData: User = {
-            id: session.user.id,
-            email: session.user.email || '',
-            name: session.user.user_metadata?.full_name || 'Usuario',
-            role: session.user.user_metadata?.role || 'proveedor',
-            createdAt: new Date(session.user.created_at),
-            lastLogin: new Date()
-          };
-          setUser(userData);
+          // Get additional user info from portal_users table
+          const { data: portalUser } = await supabase
+            .from('portal_users')
+            .select('*')
+            .eq('email', session.user.email)
+            .single();
+          
+          if (portalUser) {
+            const userData: User = {
+              id: portalUser.id,
+              email: portalUser.email,
+              name: portalUser.full_name || 'Usuario',
+              role: portalUser.role as 'proveedor' | 'aprobador' | 'operaciones',
+              createdAt: new Date(portalUser.created_at),
+              lastLogin: new Date()
+            };
+            setUser(userData);
+          }
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
         }
@@ -86,17 +117,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       if (data.user) {
-        const userData: User = {
-          id: data.user.id,
-          email: data.user.email || '',
-          name: data.user.user_metadata?.full_name || 'Usuario',
-          role: data.user.user_metadata?.role || 'proveedor',
-          createdAt: new Date(data.user.created_at),
-          lastLogin: new Date()
-        };
-        setUser(userData);
-        setIsLoading(false);
-        return true;
+        // Get additional user info from portal_users table
+        const { data: portalUser } = await supabase
+          .from('portal_users')
+          .select('*')
+          .eq('email', data.user.email)
+          .single();
+        
+        if (portalUser) {
+          const userData: User = {
+            id: portalUser.id,
+            email: portalUser.email,
+            name: portalUser.full_name || 'Usuario',
+            role: portalUser.role as 'proveedor' | 'aprobador' | 'operaciones',
+            createdAt: new Date(portalUser.created_at),
+            lastLogin: new Date()
+          };
+          setUser(userData);
+          setIsLoading(false);
+          return true;
+        }
       }
       
       setIsLoading(false);
@@ -128,6 +168,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value = {
     user,
+    isCheckingSession,
     login,
     logout,
     isLoading,
