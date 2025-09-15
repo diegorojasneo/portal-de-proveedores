@@ -32,6 +32,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     // Check for existing session
+    
+    if (!isSupabaseConfigured || !supabase) {
+      setLoading(false);
+      return;
+    }
     const checkSession = async () => {
       try {
         setIsCheckingSession(true);
