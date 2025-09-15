@@ -9,6 +9,7 @@ interface AppContextType {
   addDocument: (doc: Omit<Document, 'id' | 'createdAt' | 'status' | 'paymentStatus'>) => void;
   approveDocument: (id: string, code: string, budget: string) => void;
   rejectDocument: (id: string, reason: string) => void;
+  getFilteredDocuments: () => Document[];
   
   // Suppliers
   suppliers: Supplier[];
@@ -17,6 +18,7 @@ interface AppContextType {
   rejectSupplier: (id: string) => void;
   disableSupplier: (id: string) => void;
   resetSupplierPassword: (id: string) => void;
+  getFilteredSuppliers: () => Supplier[];
   
   // Company Documents
   companyDocuments: CompanyDocument[];
@@ -35,8 +37,22 @@ interface AppContextType {
   markNotificationAsRead: (id: string) => void;
   addNotification: (notification: Omit<Notification, 'id' | 'createdAt' | 'read'>) => void;
   
+  // Payment Records
+  getFilteredPaymentRecords: () => any[];
+  
+  // Stats
+  stats: any;
+  fetchSupplierStats: (userId: string) => void;
+  fetchOperationsStats: () => void;
+  fetchApproverInbox: (email: string) => void;
+  
   // Registration status
   hasCompletedRegistration: (userId: string) => boolean;
+  
+  // Additional functions for operations and approvers
+  submitSupplierRegistration: (data: any) => void;
+  updatePaymentRecord: (id: string, updates: any) => void;
+  paymentsQueue: any[];
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -178,6 +194,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [announcements, setAnnouncements] = useState<Announcement[]>(mockAnnouncements);
   const [feedbackSurveys, setFeedbackSurveys] = useState<FeedbackSurvey[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [paymentsQueue, setPaymentsQueue] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>(null);
 
   const addDocument = (doc: Omit<Document, 'id' | 'createdAt' | 'status' | 'paymentStatus'>) => {
     const newDoc: Document = {
@@ -314,17 +332,83 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     return supplier ? supplier.status === 'approved' : false;
   };
 
+  const submitSupplierRegistration = (data: any) => {
+    // Mock implementation for supplier registration
+    console.log('Supplier registration submitted:', data);
+    addNotification({
+      userId: user?.id || '1',
+      title: 'Registro enviado',
+      message: 'Su registro ha sido enviado para revisión.',
+      type: 'success'
+    });
+  };
+
+  const updatePaymentRecord = (id: string, updates: any) => {
+    // Mock implementation for updating payment records
+    console.log('Payment record updated:', id, updates);
+    addNotification({
+      userId: user?.id || '1',
+      title: 'Pago actualizado',
+      message: 'La información de pago ha sido actualizada.',
+      type: 'info'
+    });
+  };
+
+  const getFilteredDocuments = () => {
+    if (!user) return [];
+    
+    switch (user.role) {
+      case 'proveedor':
+        return documents.filter(doc => doc.supplierId === user.id);
+      case 'aprobador':
+        return documents.filter(doc => doc.approverEmail === user.email);
+      case 'operaciones':
+        return documents;
+      default:
+        return [];
+    }
+  };
+
+  const getFilteredSuppliers = () => {
+    if (!user) return [];
+    
+    switch (user.role) {
+      case 'operaciones':
+        return suppliers;
+      default:
+        return [];
+    }
+  };
+
+  const getFilteredPaymentRecords = () => {
+    const filteredDocs = getFilteredDocuments();
+    return filteredDocs
+      .filter(doc => doc.status === 'approved')
+      .map(doc => ({
+        id: doc.id,
+        documentNumber: doc.number,
+        supplierName: suppliers.find(s => s.id === doc.supplierId)?.businessName || 'Proveedor',
+        amount: doc.amount,
+        currency: doc.currency,
+        paymentStatus: doc.paymentStatus,
+        estimatedPaymentDate: doc.estimatedPaymentDate,
+        approvedAt: doc.approvedAt
+      }));
+  };
+
   const value = {
     documents,
     addDocument,
     approveDocument,
     rejectDocument,
+    getFilteredDocuments,
     suppliers,
     addSupplier,
     approveSupplier,
     rejectSupplier,
     disableSupplier,
     resetSupplierPassword,
+    getFilteredSuppliers,
     companyDocuments,
     addCompanyDocument,
     announcements,
@@ -334,7 +418,15 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     notifications,
     markNotificationAsRead,
     addNotification,
-    hasCompletedRegistration
+    getFilteredPaymentRecords,
+    stats,
+    fetchSupplierStats,
+    fetchOperationsStats,
+    fetchApproverInbox,
+    hasCompletedRegistration,
+    submitSupplierRegistration,
+    updatePaymentRecord,
+    paymentsQueue
   };
 
   return (
