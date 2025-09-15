@@ -9,6 +9,7 @@ interface AppContextType {
   addDocument: (doc: Omit<Document, 'id' | 'createdAt' | 'status' | 'paymentStatus'>) => void;
   approveDocument: (id: string, code: string, budget: string) => void;
   rejectDocument: (id: string, reason: string) => void;
+  getFilteredDocuments: () => Document[];
   
   // Suppliers
   suppliers: Supplier[];
@@ -17,6 +18,7 @@ interface AppContextType {
   rejectSupplier: (id: string) => void;
   disableSupplier: (id: string) => void;
   resetSupplierPassword: (id: string) => void;
+  getFilteredSuppliers: () => Supplier[];
   
   // Company Documents
   companyDocuments: CompanyDocument[];
@@ -34,6 +36,15 @@ interface AppContextType {
   notifications: Notification[];
   markNotificationAsRead: (id: string) => void;
   addNotification: (notification: Omit<Notification, 'id' | 'createdAt' | 'read'>) => void;
+  
+  // Payment Records
+  getFilteredPaymentRecords: () => any[];
+  
+  // Stats
+  stats: any;
+  fetchSupplierStats: (userId: string) => void;
+  fetchOperationsStats: () => void;
+  fetchApproverInbox: (email: string) => void;
   
   // Registration status
   hasCompletedRegistration: (userId: string) => boolean;
@@ -319,12 +330,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     addDocument,
     approveDocument,
     rejectDocument,
+    getFilteredDocuments,
     suppliers,
     addSupplier,
     approveSupplier,
     rejectSupplier,
     disableSupplier,
     resetSupplierPassword,
+    getFilteredSuppliers,
     companyDocuments,
     addCompanyDocument,
     announcements,
@@ -334,6 +347,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     notifications,
     markNotificationAsRead,
     addNotification,
+    getFilteredPaymentRecords,
+    stats,
+    fetchSupplierStats,
+    fetchOperationsStats,
+    fetchApproverInbox,
     hasCompletedRegistration
   };
 
