@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
@@ -7,7 +6,6 @@ import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import { useApp } from '../../contexts/AppContext';
 import { CheckCircle, XCircle, Eye, FileText, AlertCircle, Download, Paperclip, Search, Filter, ExternalLink, ZoomIn } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
 
 export const ApproveDocuments: React.FC = () => {
   const { getFilteredDocuments, suppliers, approveDocument, rejectDocument, stats, fetchApproverInbox } = useApp();
@@ -31,7 +29,6 @@ export const ApproveDocuments: React.FC = () => {
       fetchApproverInbox(user.email);
     }
   }, [user, fetchApproverInbox]);
-
 
   const getSupplierName = (supplierId: string) => {
     const supplier = suppliers.find(s => s.id === supplierId);
